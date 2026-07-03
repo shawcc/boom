@@ -2,17 +2,21 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { ArrowLeft, BadgeCheck, Building2, Link2, Sparkles } from "lucide-react";
 import { EvidenceTimeline } from "@/components/EvidenceTimeline";
 import { RiskPanel } from "@/components/RiskPanel";
-import { getHotspot, getStock } from "@/data/mockData";
+import { getStock } from "@/data/mockData";
+import { findLiveHotspot, useLiveHotspots } from "@/hooks/useLiveHotspots";
 
 export default function StockDetail() {
   const { symbol } = useParams();
   const stock = symbol ? getStock(symbol) : undefined;
+  const { hotspots, status, sourceName } = useLiveHotspots();
 
   if (!stock) {
     return <Navigate to="/" replace />;
   }
 
-  const relatedHotspots = stock.relatedHotspots.map((id) => getHotspot(id)).filter(Boolean);
+  const relatedHotspots = stock.relatedHotspots.map((id) => findLiveHotspot(hotspots, id)).filter(Boolean);
+  const liveEvidence = relatedHotspots.flatMap((hotspot) => hotspot?.evidence.slice(0, 2) ?? []);
+  const evidence = [...liveEvidence, ...stock.evidence].slice(0, 8);
 
   return (
     <div className="space-y-6">
@@ -27,6 +31,9 @@ export default function StockDetail() {
             <span className="rounded-full bg-white/[0.07] px-3 py-1 text-xs text-slate-300">{stock.market}</span>
             <span className="rounded-full bg-cyan-200/10 px-3 py-1 text-xs font-semibold text-cyan-100">{stock.sector}</span>
             <span className="rounded-full bg-amber-200/10 px-3 py-1 text-xs font-semibold text-amber-100">{stock.symbol}</span>
+            <span className="rounded-full bg-white/[0.07] px-3 py-1 text-xs text-slate-300">
+              {status === "live" ? sourceName : "Mock 降级"}
+            </span>
           </div>
           <h1 className="mt-5 text-4xl font-black tracking-tight text-white">{stock.name}</h1>
           <p className="mt-5 text-base leading-8 text-slate-300">{stock.summary}</p>
@@ -73,7 +80,7 @@ export default function StockDetail() {
       </section>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
-        <EvidenceTimeline evidence={stock.evidence} />
+        <EvidenceTimeline evidence={evidence} />
         <RiskPanel risks={stock.risks} />
       </div>
     </div>

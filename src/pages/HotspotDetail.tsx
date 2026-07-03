@@ -6,11 +6,12 @@ import { IntelligenceGraph } from "@/components/IntelligenceGraph";
 import { RiskBadge } from "@/components/RiskBadge";
 import { RiskPanel } from "@/components/RiskPanel";
 import { ScoreBar } from "@/components/ScoreBar";
-import { getHotspot } from "@/data/mockData";
+import { findLiveHotspot, useLiveHotspots } from "@/hooks/useLiveHotspots";
 
 export default function HotspotDetail() {
   const { id } = useParams();
-  const hotspot = id ? getHotspot(id) : undefined;
+  const { hotspots, status, sourceName } = useLiveHotspots();
+  const hotspot = findLiveHotspot(hotspots, id);
 
   if (!hotspot) {
     return <Navigate to="/" replace />;
@@ -29,6 +30,9 @@ export default function HotspotDetail() {
             <span className="rounded-full bg-cyan-200/10 px-3 py-1 text-xs font-semibold text-cyan-100">{hotspot.category}</span>
             <RiskBadge level={hotspot.riskLevel} />
             <span className="rounded-full bg-white/[0.07] px-3 py-1 text-xs text-slate-300">更新 {hotspot.updatedAt}</span>
+            <span className="rounded-full bg-white/[0.07] px-3 py-1 text-xs text-slate-300">
+              {status === "live" ? sourceName : "Mock 降级"}
+            </span>
           </div>
           <h1 className="mt-5 text-4xl font-black tracking-tight text-white">{hotspot.title}</h1>
           <p className="mt-5 text-base leading-8 text-slate-300">{hotspot.summary}</p>

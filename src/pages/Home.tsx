@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import { BrainCircuit, DatabaseZap, Flame, Search, ShieldCheck, TrendingUp } from "lucide-react";
 import { HotspotCard } from "@/components/HotspotCard";
 import { MetricCard } from "@/components/MetricCard";
-import { learningCards, hotspots } from "@/data/mockData";
+import { learningCards } from "@/data/mockData";
+import { useLiveHotspots } from "@/hooks/useLiveHotspots";
 import { cn } from "@/lib/utils";
 
 type SortKey = "heat" | "change" | "credibility";
@@ -10,6 +11,7 @@ type SortKey = "heat" | "change" | "credibility";
 export default function Home() {
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("heat");
+  const { hotspots, status, sourceName, generatedAt } = useLiveHotspots();
 
   const filteredHotspots = useMemo(() => {
     const keyword = query.trim().toLowerCase();
@@ -36,7 +38,7 @@ export default function Home() {
       <section className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:items-stretch">
         <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.06] p-8 shadow-2xl shadow-slate-950/30 backdrop-blur">
           <div className="absolute right-8 top-8 rounded-full border border-cyan-200/20 bg-cyan-200/10 px-4 py-2 text-xs font-semibold text-cyan-100">
-            盘中情报模式 · Mock
+            {status === "live" ? "实时数据源已连接" : status === "loading" ? "正在连接实时源" : "Mock 降级模式"}
           </div>
           <div className="max-w-3xl">
             <p className="text-sm font-semibold tracking-[0.28em] text-amber-100">FROM HOT TOPIC TO EVIDENCE</p>
@@ -78,6 +80,12 @@ export default function Home() {
                 </button>
               ))}
             </div>
+          </div>
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+            <span className="rounded-full bg-white/[0.06] px-3 py-1">数据源：{sourceName}</span>
+            <span className="rounded-full bg-white/[0.06] px-3 py-1">
+              更新时间：{generatedAt ? new Date(generatedAt).toLocaleString("zh-CN") : "本地样例"}
+            </span>
           </div>
         </div>
 
