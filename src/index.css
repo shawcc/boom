@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #06131f;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.scan-grid {
+  background-image:
+    linear-gradient(rgba(0, 209, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 209, 255, 0.08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at 50% 20%, black, transparent 72%);
+}
+
+.graph-grid {
+  background-image:
+    radial-gradient(circle at center, rgba(255, 209, 102, 0.18), transparent 30%),
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: auto, 34px 34px, 34px 34px;
+}
+
+::selection {
+  background: rgba(0, 209, 255, 0.35);
+  color: white;
+}
